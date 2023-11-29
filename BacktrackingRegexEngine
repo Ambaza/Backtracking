@@ -1,0 +1,22 @@
+class BacktrackingRegexEngine:
+    def match(self, regex, text):
+        return self.match_here(regex, text)
+
+    def match_here(self, regex, text):
+        if not regex:
+            return True
+        if regex == '$':
+            return not text
+
+        first_match = bool(text) and (regex[0] == '.' or regex[0] == text[0])
+
+        if len(regex) >= 2 and regex[1] == '*':
+            return (self.match_here(regex[2:], text) or
+                    (first_match and self.match_here(regex, text[1:])))
+        else:
+            return first_match and self.match_here(regex[1:], text[1:])
+
+# Example usage:
+regex_engine = BacktrackingRegexEngine()
+print(regex_engine.match("a*b", "aaab"))  # Should match
+print(regex_engine.match("a*b", "cb"))    # Should not match
